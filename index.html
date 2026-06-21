@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SINNOVA ERP - Hệ thống Quản trị Doanh nghiệp</title>
+    <!-- Tải thư viện Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Đồng bộ mã màu Teal-Green đặc trưng từ ảnh Staging thật */
+        .sinnova-bg-main { background-color: #194a52; }
+        .sinnova-active-red { background-color: #e74c3c; }
+    </style>
+</head>
+<body class="sinnova-bg-main h-screen flex flex-col overflow-hidden font-sans text-sm">
+
+    <!-- TOP BAR (THANH CÔNG CỤ PHÍA TRÊN) -->
+    <header class="bg-white border-b border-gray-300 h-11 flex justify-between items-center shrink-0 z-10">
+        <!-- Menu bên trái -->
+        <div class="flex items-center h-full text-xs font-semibold text-gray-700">
+            <!-- Nút Bắt đầu nổi bật -->
+            <div class="sinnova-active-red text-white h-full px-4 flex items-center gap-2 cursor-pointer">
+                <span>📁</span> Bắt đầu
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>🌐</span>
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>📊</span>
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>📂</span> Tài sản
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>📝</span> Điều chỉnh
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>🔄</span> Điều chuyển
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>⚙️</span> Bảo trì
+            </div>
+            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
+                <span>📋</span> Kiểm kê
+            </div>
+        </div>
+
+        <!-- Menu bên phải -->
+        <div class="flex items-center h-full px-4 gap-4 text-xs">
+            <!-- Ô tìm kiếm Menu -->
+            <div class="relative">
+                <input type="text" placeholder="Menu" class="border border-gray-300 rounded px-3 py-1 w-48 outline-none bg-gray-50 focus:bg-white text-gray-700">
+            </div>
