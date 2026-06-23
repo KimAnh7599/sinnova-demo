@@ -1,1 +1,1 @@
-[{"data":"[\n  {\"customer_id\": \"KH001\", \"payment_status\": \"Paid\", \"contract_value\": 15000000},\n  {\"customer_id\": \"KH002\", \"payment_status\": \"Unpaid\", \"contract_value\": 5000000}\n]v\n","dqi_verified":true,"last_sync":"2026-06-23T12:01:11.228Z"}]
+[{"data":"[\n  {\"customer_id\": \"KH001\", \"payment_status\": \"Paid\", \"contract_value\": 15000000},\n  {\"customer_id\": \"KH002\", \"payment_status\": \"Unpaid\", \"contract_value\": 5000000}\n]v\n","dqi_verified":true,"last_sync":"2026-06-23T12:03:03.106Z"}]
