@@ -1,0 +1,4 @@
+[
+  {"customer_id": "KH001", "tech_status": "Active", "support_tier": "Premium"},
+  {"customer_id": "KH002", "tech_status": "Pending", "support_tier": "Standard"}
+]
