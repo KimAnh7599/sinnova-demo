@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SINNOVA EAM - Hệ thống Quản trị Doanh nghiệp</title>
+    <title>SINNOVA EAM - Quản Lý Tài Sản</title>
     <!-- Tải thư viện Tailwind CSS độc lập -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -209,7 +209,7 @@
             var typingId = showTyping();
 
             // ĐỊA CHỈ WEBHOOK N8N CỦA BẠN (Cổng cục bộ khớp với cấu hình Docker n8n)
-            const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook-test/sinnova-assistant'; 
+            const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/sinnova-assistant'; 
 
             fetch(N8N_WEBHOOK_URL, {
                 method: 'POST',
@@ -243,7 +243,7 @@
                 
                 var botResponse = "";
                 if (actionType === 'help') {
-                    botResponse = "Dựa trên liên thông dữ liệu từ <b>Mục 3.2.1</b>, em tìm thấy tài liệu nghiệp vụ tương thích:<br><br>📖 <a href='#' style='color:#f26522; font-weight:bold; text-decoration:none;'>Quy trình cấu hình và chạy kiểm kê tài sản cuối kỳ trên EAM</a>";
+                    botResponse = "Dựa trên liên thông dữ liệu từ <b>Mục 3.2.1</b>, em tìm thấy tài liệu nghiệp vụ tương thích:<br><br>📖 <a href='https://help.sinnovasoft.com/' target='_blank' style='color:#f26522; font-weight:bold; text-decoration:none;'>Quy trình cấu hình và chạy kiểm kê tài sản cuối kỳ trên EAM</a>";
                 } else if (actionType === 'error') {
                     botResponse = "✅ Yêu cầu đã được lưu trữ trên CRM (<b>Mục 3.2.3</b>). Hệ thống tự động phân loại danh mục <b>#Loi_EAM_TaiSan</b> và tạo Ticket số <b>#TK-2026</b>. KTV sẽ hỗ trợ qua UltraViewer trong 15 phút.";
                 } else if (actionType === 'check') {
@@ -252,7 +252,7 @@
                     botResponse = "✅ Hệ thống đã ghi nhận nhu cầu nâng cấp của đơn vị thành một <b>Cơ hội kinh doanh (Opportunity)</b> trên CRM của phòng Kinh doanh. Chuyên viên sẽ liên hệ gửi biểu phí chi tiết ngay.";
                 } else {
                     // Phản hồi dự phòng khi tự gõ text tự do
-                    botResponse = "Em đã nhận được thông điệp: '" + messageText + "'. Hiện tại tính năng hội thoại tự do bằng AI đang được cấu hình ở Tầng 3. Anh có thể sử dụng các nút thao tác nhanh để demo nhé!";
+                    botResponse = "Tôi đã nhận được thông điệp: '" + messageText + "'. Cảm ơn Anh/Chị đã liên hệ, sẽ có nhân viên hỗ trợ trong 2 phút nữa.";
                 }
 
                 appendMsg('bot', botResponse);
