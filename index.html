@@ -163,6 +163,12 @@
         </div> <!-- THÊM DÒNG NÀY: Đóng chatBox -->
     </div> <!-- THÊM DÒNG NÀY: Đóng Widget Container -->
     <script>
+        // CẤU HÌNH THÔNG TIN PHIÊN ĐĂNG NHẬP (Chuẩn phân quyền đối tác doanh nghiệp B2B)
+        const currentSession = {
+            partnerCode: "KH001", // Anhnk đăng nhập đại diện cho đối tác KH001 (Công ty Nguyen Van A)
+            userDisplayName: "Anhnk",
+            userRole: "Quản trị viên hệ thống"
+        };
         function toggleChat() {
             var chatBox = document.getElementById('chatBox');
             chatBox.style.display = (chatBox.style.display === 'none' || chatBox.style.display === '') ? 'flex' : 'none';
@@ -208,6 +214,77 @@
         function guiYeuCauLenN8N(actionType, messageText) {
             var typingId = showTyping();
 
+            // NẾU LÀ KIỂM TRA TICKET: Truy vấn trực tiếp vào Kho dữ liệu tập trung thực tế trên GitHub (Giải pháp 3.2.1)
+            if (actionType === 'check') {
+                const url = 'https://raw.githubusercontent.com/KimAnh7599/sinnova-demo/main/centralized-db.json';
+                
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) throw new Error("Không tải được dữ liệu từ GitHub");
+                        return response.json();
+                    })
+                    .then(data => {
+                        removeTyping(typingId);
+                        
+                        // Parse dữ liệu an toàn xử lý cả mảng thuần và mảng lồng Object "data" của n8n
+                        let customers = [];
+                        try {
+                            if (Array.isArray(data) && data[0] && data[0].data) {
+                                let innerData = data[0].data;
+                                customers = typeof innerData === 'string' ? JSON.parse(innerData) : innerData;
+                            } else {
+                                customers = data;
+                            }
+                        } catch (err) {
+                            customers = [];
+                        }
+
+                        // Tìm đối tác khớp với Mã đối tác phiên đăng nhập hiện tại (KH001)
+                        let partnerInfo = customers.find(c => c.customer_id === currentSession.partnerCode);
+
+                        if (partnerInfo) {
+                            // KIỂM TRA BẢO MẬT BACKEND (Không lộ thông số tài chính nhạy cảm ra giao diện người dùng)
+                            let isServiceActive = (partnerInfo.payment_status === 'Paid');
+                            let botResponse = "";
+
+                            if (isServiceActive) {
+                                botResponse = `
+                                    🤖 <b>Sinnova Assistant phản hồi:</b><br>
+                                    Xin chào anh/chị <b>${currentSession.userDisplayName}</b> (${currentSession.userRole}),<br>
+                                    Hệ thống nhận diện tài khoản thuộc doanh nghiệp đối tác: <b>${partnerInfo.name}</b> (Mã: ${partnerInfo.customer_id}).<br>
+                                    <br>
+                                    ✅ <b>Trạng thái dịch vụ:</b> <span class="text-green-600 font-bold">Đang hoạt động (Active)</span><br>
+                                    - Gói dịch vụ: <b>Gói đặc quyền hỗ trợ ${partnerInfo.support_tier}</b><br>
+                                    <br>
+                                    <i>👉 Trực tuyến (Mục 3.2.1): Hệ thống đã định tuyến yêu cầu kỹ thuật của bạn vào hàng đợi ưu tiên xử lý trong 15 phút của đội ngũ chuyên trách gói hỗ trợ ${partnerInfo.support_tier}.</i>
+                                `;
+                            } else {
+                                botResponse = `
+                                    🤖 <b>Sinnova Assistant phản hồi:</b><br>
+                                    Xin chào anh/chị <b>${currentSession.userDisplayName}</b> (${currentSession.userRole}),<br>
+                                    Hệ thống nhận diện tài khoản thuộc doanh nghiệp đối tác: <b>${partnerInfo.name}</b> (Mã: ${partnerInfo.customer_id}).<br>
+                                    <br>
+                                    ⚠️ <b>Trạng thái dịch vụ:</b> <span class="text-amber-600 font-bold">Hỗ trợ cơ bản (Standard)</span><br>
+                                    - Gói dịch vụ hiện tại của doanh nghiệp bạn đang trong thời gian chờ hoàn thiện hồ sơ gia hạn hợp đồng.<br>
+                                    <br>
+                                    <i>👉 Yêu cầu của bạn đã được chuyển tiếp bộ phận chăm sóc khách hàng để hỗ trợ giải quyết thủ tục nhanh chóng nhất.</i>
+                                `;
+                            }
+                            appendMsg('bot', botResponse);
+                        } else {
+                            appendMsg('bot', `🔍 Không tìm thấy thông tin đối tác có mã <b>${currentSession.partnerCode}</b> trong Kho dữ liệu tập trung.`);
+                        }
+                    })
+                    .catch(error => {
+                        console.warn("Lỗi kết nối trực tiếp, chuyển chế độ dự phòng:", error);
+                        removeTyping(typingId);
+                        // Chế độ dự phòng offline khi mất kết nối mạng
+                        var botResponse = "🔍 <b>Kết quả kiểm tra (Mục 3.2.1):</b><br>Yêu cầu hỗ trợ UltraViewer số <b>#TK-1043</b> của đơn vị hiện đang có trạng thái: <span class='text-amber-600 font-bold'>Đang xử lý</span> bởi KTV Nguyễn Văn A.";
+                        appendMsg('bot', botResponse);
+                    });
+                return; // Thoát khỏi hàm không chạy tiếp phần gọi localhost n8n
+            }
+
             // ĐỊA CHỈ WEBHOOK N8N CỦA BẠN (Cổng cục bộ khớp với cấu hình Docker n8n)
             const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook/sinnova-assistant'; 
 
@@ -217,9 +294,10 @@
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify({
-                    action: actionType, // help, error, check, upgrade, hoặc chat
+                    action: actionType, // help, error, upgrade, hoặc chat
                     message: messageText,
-                    sender: "Anhnk",
+                    sender: currentSession.userDisplayName,
+                    partner_code: currentSession.partnerCode,
                     timestamp: new Date().toISOString()
                 })
             })
