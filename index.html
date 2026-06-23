@@ -154,22 +154,21 @@
                 </div>
             </div>
             
-            <!-- Footer nhập liệu thiết kế chuẩn 1Office -->
+            <!-- Footer nhập liệu thiết kế chuẩn 1Office - ĐÃ MỞ KHÓA -->
             <div class="p-3 bg-white border-t border-gray-200 flex items-center gap-2 shrink-0">
-                <span class="text-gray-400 text-lg cursor-not-allowed">＋</span>
-                <input type="text" class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs outline-none" placeholder="Viết tin nhắn..." disabled>
-                <span class="text-gray-400 text-lg cursor-not-allowed">✉️</span>
+                <span class="text-gray-400 text-lg cursor-pointer hover:text-gray-600">＋</span>
+                <input id="chatInput" type="text" class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs outline-none" placeholder="Viết tin nhắn..." onkeypress="handleKeyPress(event)">
+                <span id="sendBtn" onclick="sendCustomMessage()" class="text-[#f26522] text-lg cursor-pointer hover:text-orange-600">✉️</span>
             </div>
-        </div>
-    </div>
-
+        </div> <!-- THÊM DÒNG NÀY: Đóng chatBox -->
+    </div> <!-- THÊM DÒNG NÀY: Đóng Widget Container -->
     <script>
         function toggleChat() {
             var chatBox = document.getElementById('chatBox');
             chatBox.style.display = (chatBox.style.display === 'none' || chatBox.style.display === '') ? 'flex' : 'none';
         }
 
-        // BỘ CƠ CHẾ PHẢN HỒI NGOẠI TUYẾN TỰ ĐỘNG (KHÔNG CẦN KẾT NỐI SERVER)
+        // 1. HÀM XỬ LÝ KHI BẤM CÁC NÚT CHỨC NĂNG NHANH
         function simulateAction(actionType) {
             var label = '';
             if (actionType === 'help') label = '📖 Hướng dẫn nghiệp vụ EAM';
@@ -178,12 +177,71 @@
             if (actionType === 'upgrade') label = '⬆️ Yêu cầu nâng cấp phân hệ';
 
             appendMsg('user', label);
+            guiYeuCauLenN8N(actionType, label);
+        }
+
+        // 2. HÀM XỬ LÝ KHI TỰ GÕ TIN NHẮN VÀ BẤM GỬI
+        function sendCustomMessage() {
+            var inputEl = document.getElementById('chatInput');
+            var messageText = inputEl.value.trim();
+            
+            if (messageText === '') return; // Không gửi nếu ô trống
+
+            // Hiển thị tin nhắn của người dùng gõ lên khung chat
+            appendMsg('user', messageText);
+            
+            // Xóa chữ trong ô nhập liệu sau khi gửi
+            inputEl.value = '';
+
+            // Gửi lên n8n với action là 'chat'
+            guiYeuCauLenN8N('chat', messageText);
+        }
+
+        // Hỗ trợ bấm phím Enter để gửi tin nhắn
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendCustomMessage();
+            }
+        }
+
+        // 3. HÀM GỬI DATA CHUNG LÊN N8N (SỬ DỤNG JSON)
+        function guiYeuCauLenN8N(actionType, messageText) {
             var typingId = showTyping();
 
-            setTimeout(() => {
-                removeTyping(typingId);
-                var botResponse = "";
+            // ĐỊA CHỈ WEBHOOK N8N CỦA BẠN (Cổng cục bộ khớp với cấu hình Docker n8n)
+            const N8N_WEBHOOK_URL = 'http://localhost:5678/webhook-test/sinnova-assistant'; 
 
+            fetch(N8N_WEBHOOK_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    action: actionType, // help, error, check, upgrade, hoặc chat
+                    message: messageText,
+                    sender: "Anhnk",
+                    timestamp: new Date().toISOString()
+                })
+            })
+            .then(response => {
+                removeTyping(typingId);
+                if (response.ok) {
+                    return response.json(); // Đọc dữ liệu dạng JSON trả về từ n8n
+                } else {
+                    throw new Error("Không kết nối được n8n, kích hoạt chế độ dự phòng");
+                }
+            })
+            .then(data => {
+                // Đọc thuộc tính "reply" từ JSON n8n gửi về
+                var botResponse = data.reply || "Hệ thống n8n đã ghi nhận và xử lý yêu cầu.";
+                appendMsg('bot', botResponse);
+            })
+            .catch(error => {
+                // PHƯƠNG ÁN DỰ PHÒNG CHẠY OFFLINE KHI N8N GẶP SỰ CỐ
+                console.warn("Chế độ dự phòng (Offline Mode):", error);
+                removeTyping(typingId);
+                
+                var botResponse = "";
                 if (actionType === 'help') {
                     botResponse = "Dựa trên liên thông dữ liệu từ <b>Mục 3.2.1</b>, em tìm thấy tài liệu nghiệp vụ tương thích:<br><br>📖 <a href='#' style='color:#f26522; font-weight:bold; text-decoration:none;'>Quy trình cấu hình và chạy kiểm kê tài sản cuối kỳ trên EAM</a>";
                 } else if (actionType === 'error') {
@@ -192,12 +250,16 @@
                     botResponse = "🔍 <b>Kết quả kiểm tra (Mục 3.2.1):</b><br>Yêu cầu hỗ trợ UltraViewer số <b>#TK-1043</b> của đơn vị hiện đang có trạng thái: <span class='text-amber-600 font-bold'>Đang xử lý</span> bởi KTV Nguyễn Văn A.";
                 } else if (actionType === 'upgrade') {
                     botResponse = "✅ Hệ thống đã ghi nhận nhu cầu nâng cấp của đơn vị thành một <b>Cơ hội kinh doanh (Opportunity)</b> trên CRM của phòng Kinh doanh. Chuyên viên sẽ liên hệ gửi biểu phí chi tiết ngay.";
+                } else {
+                    // Phản hồi dự phòng khi tự gõ text tự do
+                    botResponse = "Em đã nhận được thông điệp: '" + messageText + "'. Hiện tại tính năng hội thoại tự do bằng AI đang được cấu hình ở Tầng 3. Anh có thể sử dụng các nút thao tác nhanh để demo nhé!";
                 }
 
                 appendMsg('bot', botResponse);
-            }, 1000);
+            });
         }
 
+        // HÀM HIỂN THỊ TIN NHẮN LÊN GIAO DIỆN
         function appendMsg(sender, text) {
             var msgs = document.getElementById('chatMsgs');
             var row = document.createElement('div');
@@ -214,6 +276,7 @@
             msgs.scrollTop = msgs.scrollHeight;
         }
 
+        // HÀM HIỂN THỊ ĐANG NHẬP (TYPING)
         function showTyping() {
             var msgs = document.getElementById('chatMsgs');
             var id = 'typing-' + Date.now();
