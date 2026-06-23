@@ -3,51 +3,240 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SINNOVA ERP - Hệ thống Quản trị Doanh nghiệp</title>
-    <!-- Tải thư viện Tailwind CSS -->
+    <title>SINNOVA EAM - Hệ thống Quản trị Doanh nghiệp</title>
+    <!-- Tải thư viện Tailwind CSS độc lập -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Đồng bộ mã màu Teal-Green đặc trưng từ ảnh Staging thật */
         .sinnova-bg-main { background-color: #194a52; }
         .sinnova-active-red { background-color: #e74c3c; }
+        /* Tối ưu hóa thanh cuộn mượt mà */
+        ::-webkit-scrollbar { width: 5px; height: 5px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 10px; }
     </style>
 </head>
-<body class="sinnova-bg-main h-screen flex flex-col overflow-hidden font-sans text-sm">
+<body class="sinnova-bg-main h-screen flex flex-col overflow-hidden font-sans text-sm select-none">
 
     <!-- TOP BAR (THANH CÔNG CỤ PHÍA TRÊN) -->
-    <header class="bg-white border-b border-gray-300 h-11 flex justify-between items-center shrink-0 z-10">
-        <!-- Menu bên trái -->
+    <header class="bg-white border-b border-gray-300 h-11 flex justify-between items-center shrink-0 z-30">
+        <!-- Nhóm công cụ bên trái -->
         <div class="flex items-center h-full text-xs font-semibold text-gray-700">
-            <!-- Nút Bắt đầu nổi bật -->
-            <div class="sinnova-active-red text-white h-full px-4 flex items-center gap-2 cursor-pointer">
-                <span>📁</span> Bắt đầu
+            
+            <!-- Trỏ chuột vào Bắt đầu mới hiện danh sách Dropdown -->
+            <div class="relative group h-full">
+                <!-- Nút Bắt đầu kích hoạt dropdown khi di chuột qua -->
+                <div class="sinnova-active-red text-white h-full px-4 flex items-center gap-2 cursor-pointer transition-colors hover:bg-red-600">
+                    <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24"><path d="M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z"/></svg>
+                    <span>Bắt đầu</span>
+                </div>
+                
+                <!-- Bảng danh sách mô-đun dropdown tự động xuất hiện khi hover nhóm -->
+                <div class="absolute left-0 top-11 w-56 bg-white border border-gray-300 shadow-2xl hidden group-hover:block z-50">
+                    <ul class="text-xs font-semibold text-gray-700">
+                        <!-- HIỆU CHỈNH: Mục Hệ thống và các mục khác đồng bộ đổi màu cam khi di chuột đến nơi đặt chuột -->
+                        <li class="bg-white text-gray-700 hover:bg-[#e74c3c] hover:text-white p-2.5 flex justify-between items-center cursor-pointer transition-colors">
+                            <div class="flex items-center gap-2.5"><span>☰</span> Hệ thống</div>
+                            <div class="w-3.5 h-3.5 bg-[#4a90e2] text-white flex items-center justify-center rounded-[3px] text-[8px] font-bold">▶</div>
+                        </li>
+                        <script>
+                            const menuItems = ["Danh mục", "Sản phẩm", "Đối tác", "Điều hành", "Kho hàng", "Tài sản", "Báo cáo, phân tích"];
+                            menuItems.forEach(item => {
+                                document.write(`
+                                    <li class="bg-white text-gray-700 hover:bg-[#e74c3c] hover:text-white p-2.5 border-t border-gray-100 flex justify-between items-center cursor-pointer transition-colors">
+                                        <div class="flex items-center gap-2.5"><span>☰</span> ${item}</div>
+                                        <div class="w-3.5 h-3.5 bg-[#4a90e2] text-white flex items-center justify-center rounded-[3px] text-[8px] font-bold">▶</div>
+                                    </li>
+                                `);
+                            });
+                        </script>
+                    </ul>
+                </div>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>🌐</span>
+
+            <!-- Các nút icon nghiệp vụ chuẩn trên thanh công cụ -->
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" /></svg>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>📊</span>
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>📂</span> Tài sản
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" /></svg>
+                <span>Tài sản</span>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>📝</span> Điều chỉnh
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
+                <span>Điều chỉnh</span>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>🔄</span> Điều chuyển
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                <span>Điều chuyển</span>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>⚙️</span> Bảo trì
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.57 1.064c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-hidden="true" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <span>Bảo trì</span>
             </div>
-            <div class="hover:bg-gray-100 h-full px-3 flex items-center gap-1.5 cursor-pointer border-r border-gray-200">
-                <span>📋</span> Kiểm kê
+            
+            <!-- Cập nhật chính xác icon Kiểm kê giống hình Staging của bạn -->
+            <div class="hover:bg-gray-100 h-full px-3.5 flex items-center border-r border-gray-200 cursor-pointer gap-1.5">
+                <svg class="w-4 h-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" /></svg>
+                <span>Kiểm kê</span>
             </div>
         </div>
 
-        <!-- Menu bên phải -->
+        <!-- Nhóm công cụ bên phải của Top Bar -->
         <div class="flex items-center h-full px-4 gap-4 text-xs">
-            <!-- Ô tìm kiếm Menu -->
-            <div class="relative">
-                <input type="text" placeholder="Menu" class="border border-gray-300 rounded px-3 py-1 w-48 outline-none bg-gray-50 focus:bg-white text-gray-700">
+            <input type="text" placeholder="Menu" class="border border-gray-300 rounded px-3 py-1 w-44 outline-none bg-gray-50 focus:bg-white text-gray-700">
+            <span class="text-gray-500 cursor-pointer text-base">❓</span>
+            <div class="relative cursor-pointer">
+                <span class="text-gray-600 text-lg">🔔</span>
+                <span class="sinnova-active-red text-white text-[9px] font-bold px-1 rounded-full absolute -top-1 -right-1">3</span>
             </div>
+            <div class="flex items-center gap-1 cursor-pointer text-gray-700 font-medium">
+                <span>Anhnk</span>
+                <span class="text-[10px]">▼</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- MÀN HÌNH WORKSPACE CHÍNH (Đồng bộ nguyên vẹn màu Staging trống màu xanh lục lam đậm) -->
+    <main class="flex-1 sinnova-bg-main relative">
+        <!-- Vùng làm việc trống màu xanh đậm của Sinnova -->
+    </main>
+
+    <!-- WIDGET TRỢ LÝ SỐ (THIẾT KẾ CHUẨN 1OFFICE - CHẠY NGOẠI TUYẾN 100%) -->
+    <div class="fixed bottom-5 right-5 z-[99999] font-sans">
+        <!-- Nút tròn kích hoạt -->
+        <button id="assistantBtn" onclick="toggleChat()" class="bg-[#f26522] text-white border-none p-3.5 rounded-full font-semibold cursor-pointer shadow-lg text-sm flex items-center gap-2 transition-transform hover:-translate-y-0.5">
+            <div class="relative w-5 h-5 bg-white text-[#f26522] rounded-full flex items-center justify-center font-bold text-xs">SA</div>
+            <span>Sinnova Assistant</span>
+        </button>
+        
+        <!-- Khung chat thiết kế chuẩn 1Office -->
+        <div id="chatBox" class="hidden w-[350px] h-[480px] bg-white rounded-2xl shadow-2xl absolute bottom-[60px] right-0 flex-col overflow-hidden border border-gray-200">
+            <!-- Header chuẩn 1Office -->
+            <div class="bg-white border-b border-gray-200 p-3 flex justify-between items-center shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="relative w-8 h-8">
+                        <div class="w-full h-full bg-[#f26522] text-white rounded-full flex items-center justify-center font-bold text-xs">SA</div>
+                        <div class="w-2.5 h-2.5 bg-green-500 border-2 border-white rounded-full absolute bottom-0 right-0"></div>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-bold text-xs text-gray-800">Sinnova Assistant</span>
+                        <span class="text-[9px] text-green-500 font-semibold">● Trực tuyến</span>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 text-gray-400 text-xs">
+                    <span class="hover:text-gray-600 cursor-pointer">➖</span>
+                    <span onclick="toggleChat()" class="hover:text-gray-600 cursor-pointer font-bold text-sm">✕</span>
+                </div>
+            </div>
+            
+            <!-- Nội dung hội thoại -->
+            <div id="chatMsgs" class="flex-1 p-4 overflow-y-auto bg-gray-50 flex flex-col gap-3 text-xs leading-relaxed">
+                <div class="self-center text-[10px] text-gray-400">Trợ lý nghiệp vụ hệ sinh thái Sinnova ERP</div>
+                
+                <div class="flex gap-2">
+                    <div class="w-7 h-7 rounded-full bg-[#f26522] text-white flex items-center justify-center font-bold text-[9px] shrink-0">SA</div>
+                    <div class="bg-white text-gray-800 p-3.5 rounded-2xl rounded-tl-none border border-gray-200 shadow-sm max-w-[85%]">
+                        <!-- VỊ TRÍ SỬA NỘI DUNG CHÀO MỪNG -->
+                        <p class="font-semibold mb-1">Chào bạn! Tôi là Trợ lý Sinnova Assistant.</p>
+                        <p class="mb-3"><b>Bạn đang cần hỗ trợ?</b> Tôi có thể giải đáp thắc mắc, kiểm tra lỗi, ghi nhận yêu cầu nâng cấp hoặc tạo ticket. Bạn cứ mô tả nhu cầu, tôi sẽ phản hồi ngay.</p>
+                        
+                        <!-- Nút bấm dạng bong bóng chat của 1Office -->
+                        <div class="grid grid-cols-2 gap-2 mt-2">
+                            <button onclick="simulateAction('upgrade')" class="text-left bg-gray-50 border border-gray-200 hover:bg-[#f26522] hover:text-white p-2.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1 text-gray-700">⬆️ Yêu cầu nâng cấp</button>
+                            <button onclick="simulateAction('error')" class="text-left bg-gray-50 border border-gray-200 hover:bg-[#f26522] hover:text-white p-2.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1 text-gray-700">⚠️ Báo lỗi</button>
+                            <button onclick="simulateAction('help')" class="text-left bg-gray-50 border border-gray-200 hover:bg-[#f26522] hover:text-white p-2.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1 text-gray-700">📖 Hướng dẫn</button>
+                            <button onclick="simulateAction('check')" class="text-left bg-gray-50 border border-gray-200 hover:bg-[#f26522] hover:text-white p-2.5 rounded-lg text-[10px] font-semibold transition-all flex items-center gap-1 text-gray-700">🔍 Kiểm tra ticket</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Footer nhập liệu thiết kế chuẩn 1Office -->
+            <div class="p-3 bg-white border-t border-gray-200 flex items-center gap-2 shrink-0">
+                <span class="text-gray-400 text-lg cursor-not-allowed">＋</span>
+                <input type="text" class="flex-1 bg-gray-100 rounded-full px-4 py-2 text-xs outline-none" placeholder="Viết tin nhắn..." disabled>
+                <span class="text-gray-400 text-lg cursor-not-allowed">✉️</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleChat() {
+            var chatBox = document.getElementById('chatBox');
+            chatBox.style.display = (chatBox.style.display === 'none' || chatBox.style.display === '') ? 'flex' : 'none';
+        }
+
+        // BỘ CƠ CHẾ PHẢN HỒI NGOẠI TUYẾN TỰ ĐỘNG (KHÔNG CẦN KẾT NỐI SERVER)
+        function simulateAction(actionType) {
+            var label = '';
+            if (actionType === 'help') label = '📖 Hướng dẫn nghiệp vụ EAM';
+            if (actionType === 'error') label = '⚠️ Báo lỗi sự cố kiểm kê';
+            if (actionType === 'check') label = '🔍 Kiểm tra ticket kỹ thuật';
+            if (actionType === 'upgrade') label = '⬆️ Yêu cầu nâng cấp phân hệ';
+
+            appendMsg('user', label);
+            var typingId = showTyping();
+
+            setTimeout(() => {
+                removeTyping(typingId);
+                var botResponse = "";
+
+                if (actionType === 'help') {
+                    botResponse = "Dựa trên liên thông dữ liệu từ <b>Mục 3.2.1</b>, em tìm thấy tài liệu nghiệp vụ tương thích:<br><br>📖 <a href='#' style='color:#f26522; font-weight:bold; text-decoration:none;'>Quy trình cấu hình và chạy kiểm kê tài sản cuối kỳ trên EAM</a>";
+                } else if (actionType === 'error') {
+                    botResponse = "✅ Yêu cầu đã được lưu trữ trên CRM (<b>Mục 3.2.3</b>). Hệ thống tự động phân loại danh mục <b>#Loi_EAM_TaiSan</b> và tạo Ticket số <b>#TK-2026</b>. KTV sẽ hỗ trợ qua UltraViewer trong 15 phút.";
+                } else if (actionType === 'check') {
+                    botResponse = "🔍 <b>Kết quả kiểm tra (Mục 3.2.1):</b><br>Yêu cầu hỗ trợ UltraViewer số <b>#TK-1043</b> của đơn vị hiện đang có trạng thái: <span class='text-amber-600 font-bold'>Đang xử lý</span> bởi KTV Nguyễn Văn A.";
+                } else if (actionType === 'upgrade') {
+                    botResponse = "✅ Hệ thống đã ghi nhận nhu cầu nâng cấp của đơn vị thành một <b>Cơ hội kinh doanh (Opportunity)</b> trên CRM của phòng Kinh doanh. Chuyên viên sẽ liên hệ gửi biểu phí chi tiết ngay.";
+                }
+
+                appendMsg('bot', botResponse);
+            }, 1000);
+        }
+
+        function appendMsg(sender, text) {
+            var msgs = document.getElementById('chatMsgs');
+            var row = document.createElement('div');
+            row.className = sender === 'user' ? 'flex gap-2 justify-end' : 'flex gap-2';
+            
+            var avatar = sender === 'user' ? '' : `<div class="w-7 h-7 rounded-full bg-[#f26522] text-white flex items-center justify-center font-bold text-[9px] shrink-0">SA</div>`;
+            var style = sender === 'user' ? 'bg-[#00509d] text-white p-3 rounded-2xl rounded-tr-none shadow-sm max-w-[85%]' : 'bg-white text-gray-800 p-3 rounded-2xl rounded-tl-none border border-gray-200 shadow-sm max-w-[85%]';
+
+            row.innerHTML = `
+                ${avatar}
+                <div class="${style}">${text}</div>
+            `;
+            msgs.appendChild(row);
+            msgs.scrollTop = msgs.scrollHeight;
+        }
+
+        function showTyping() {
+            var msgs = document.getElementById('chatMsgs');
+            var id = 'typing-' + Date.now();
+            var row = document.createElement('div');
+            row.id = id;
+            row.className = 'flex gap-2';
+            row.innerHTML = `
+                <div class="w-7 h-7 rounded-full bg-[#f26522] text-white flex items-center justify-center font-bold text-[9px] shrink-0">SA</div>
+                <div class="bg-white text-gray-400 p-3 rounded-2xl rounded-tl-none border border-gray-200 shadow-sm flex gap-1 items-center">
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.2s]"></span>
+                    <span class="w-1.5 h-1.5 bg-gray-400 rounded-full animate-bounce [animation-delay:0.4s]"></span>
+                </div>
+            `;
+            msgs.appendChild(row);
+            msgs.scrollTop = msgs.scrollHeight;
+            return id;
+        }
+
+        function removeTyping(id) {
+            var el = document.getElementById(id);
+            if (el) el.remove();
+        }
+    </script>
+</body>
+</html>
