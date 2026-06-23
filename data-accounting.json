@@ -1,0 +1,4 @@
+[
+  {"customer_id": "KH001", "payment_status": "Paid", "contract_value": 15000000},
+  {"customer_id": "KH002", "payment_status": "Unpaid", "contract_value": 5000000}
+]v
